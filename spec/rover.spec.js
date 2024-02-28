@@ -41,5 +41,8 @@ describe("Rover class", function() {
     let response = testRover.receiveMessage(message);
     expect(response.results).toEqual(
       expect.arrayContaining([expect.objectContaining({roverStatus: expect.objectContaining(testRoverStatus)})]));
+    
+    
+    expect(response.results.mode).toEqual(testRoverStatus.mode);
   });
 });
