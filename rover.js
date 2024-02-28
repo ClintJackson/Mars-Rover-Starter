@@ -15,8 +15,8 @@ class Rover {
       }
       for (let command of message.commands){
          if (command.commandType ==="STATUS_CHECK") {
-            response.results.push({completed: true});
             response.results.push({
+               completed: true,
                roverStatus: {
                   mode: this.mode,
                   generatorWatts: this.generatorWatts,

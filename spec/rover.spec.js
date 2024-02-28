@@ -26,23 +26,26 @@ describe("Rover class", function() {
     let commands = [new Command('MODE_CHANGE', 'LOW_POWER'), new Command('STATUS_CHECK')];
     let message = new Message('Test message with two commands', commands);
     let testRover = new Rover (100);
-    expect(testRover.receiveMessage(message).results.length).toEqual(message.commands.length + 1);
+    expect(testRover.receiveMessage(message).results.length).toEqual(message.commands.length);
   });
 
   it("responds correctly to the status check command", function(){
     let commands = [new Command('STATUS_CHECK')];
     let message = new Message("Test message with two commands", commands);
     let testRover = new Rover(100);
-    let testRoverStatus = {
+     let testRoverStatus = {
       mode: testRover.mode,
       generatorWatts: testRover.generatorWatts,
       position: testRover.position
     };
+    
     let response = testRover.receiveMessage(message);
+    let roverStatus = response.results.find(result => result.roverStatus).roverStatus; //gets into the actual roverStatus object. Can then use it for easier expect statements comparing the values in  key:values to what's returned by testRover.(whatever key).
     expect(response.results).toEqual(
       expect.arrayContaining([expect.objectContaining({roverStatus: expect.objectContaining(testRoverStatus)})]));
     
     
-    expect(response.results.mode).toEqual(testRoverStatus.mode);
+    expect(roverStatus.mode).toEqual(testRover.mode);
+    expect(roverStatus.generatorWatts).toEqual(testRover.generatorWatts);
   });
 });
