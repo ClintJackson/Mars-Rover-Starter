@@ -31,7 +31,7 @@ describe("Rover class", function() {
 
   it("responds correctly to the status check command", function(){
     let commands = [new Command('STATUS_CHECK')];
-    let message = new Message("Test message with two commands", commands);
+    let message = new Message("Test message", commands);
     let testRover = new Rover(100);
      let testRoverStatus = {
       mode: testRover.mode,
@@ -40,12 +40,37 @@ describe("Rover class", function() {
     };
     
     let response = testRover.receiveMessage(message);
-    let roverStatus = response.results.find(result => result.roverStatus).roverStatus; //gets into the actual roverStatus object. Can then use it for easier expect statements comparing the values in  key:values to what's returned by testRover.(whatever key).
+    let roverStatus = response.results.find(result => result.roverStatus).roverStatus; /*gets into the actual roverStatus object.  
+    Can then use it for easier expect statements comparing the values in key:values to what's returned by testRover.(whatever key).
+    .find array method returns "truthy" if it finds "roverStatus" and returns that path, which can then be accessed via .roverStatus. 
+    */
     expect(response.results).toEqual(
       expect.arrayContaining([expect.objectContaining({roverStatus: expect.objectContaining(testRoverStatus)})]));
     
     
     expect(roverStatus.mode).toEqual(testRover.mode);
     expect(roverStatus.generatorWatts).toEqual(testRover.generatorWatts);
+    expect(roverStatus.position).toEqual(testRover.position);
+    
   });
+
+  it("responds correctly to the mode change command", function(){
+    let commands = [new Command('STATUS_CHECK'), ("MODE_CHANGE", "LOW_POWER")];
+    let message = new Message("confirming low_power", commands);
+    let testRover = new Rover(100);
+
+    let response = testRover.receiveMessage(message);
+    
+    let roverStatus = response.results.find(result => result.roverStatus).roverStatus;
+    
+    //let roverResultsCompleted = response.results.find(result => result.completed).completed;
+    
+    let testLowPower = [new Command("MODE_CHANGE", "LOW_POWER")];
+    let secondMessage = new Message("confirming updated values", testLowPower);
+    let response2 = testRover.receiveMessage(secondMessage);
+    let secondRoverResult = response2.results.find(results => results.completed).completed;
+    expect(secondRoverResult).toEqual(true);
+    expect(testRover.mode).toBe("LOW_POWER");
+    
+  })
 });
