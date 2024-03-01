@@ -108,5 +108,11 @@ describe("Rover class", function() {
     expect(roverResult4).toEqual(true); //if true, mode should be "NORMAL", check position next
     expect(testRover.position).toEqual(400); //success 
   });
-  
+  it("responds with the position for the move command", function(){
+    let command = [new Command("MOVE", 1290)];
+    let message = new Message("should update position", command);
+    let testRover = new Rover(0);
+    let response = testRover.receiveMessage(message);
+    expect(testRover.position).toEqual(1290);
+  })
 });
