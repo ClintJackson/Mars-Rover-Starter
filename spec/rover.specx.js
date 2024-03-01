@@ -79,4 +79,34 @@ describe("Rover class", function() {
     expect(thirdRoverResult).toEqual(true);
     expect(testRover.mode).toBe("NORMAL");
   })
+
+  it("responds with a false completed value when attempting to move in LOW_POWER", function(){
+    let testLowPowerCommand = [new Command("MODE_CHANGE", "LOW_POWER")];
+    let message = new Message ("checking false completed return", testLowPowerCommand);
+    let testRover = new Rover(0);
+    let response1 = testRover.receiveMessage(message);
+    let roverResult = response1.results.find(results => results.completed).completed;
+
+    expect(roverResult).toEqual(true); //can delete this one later
+
+    let moveCommand =[new Command("MOVE", 500)];
+    let message2 = new Message("shouldn't move in low power", moveCommand);
+    let response2 = testRover.receiveMessage(message2);
+    let roverResult2 = response2.results[0].completed;
+    expect(roverResult2).toEqual(false);
+
+    let updateStatusToNormal = [new Command("MODE_CHANGE", "NORMAL")];
+    let message3 = new Message("updating rover mode to normal", updateStatusToNormal);
+    let response3 = testRover.receiveMessage(message3);
+    let roverResult3 = response3.results[0].completed;
+    expect(roverResult3).toEqual(true); 
+    //finally
+    let checkMOVEBehavior = [new Command("MOVE", 400)];
+    let message4 = new Message("should update this.position and return true", checkMOVEBehavior);
+    let response4 = testRover.receiveMessage(message4);
+    let roverResult4 = response4.results[0].completed;
+    expect(roverResult4).toEqual(true); //if true, mode should be "NORMAL", check position next
+    expect(testRover.position).toEqual(400); //success 
+  });
+  
 });

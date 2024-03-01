@@ -17,8 +17,7 @@ class Rover {
          if (command.commandType === "MODE_CHANGE") {
             if (command.value === "LOW_POWER") {
             this.mode = 'LOW_POWER';
-            }
-            if (command.value === "NORMAL") {
+            } else if (command.value === "NORMAL") {
                this.mode = "NORMAL";
             }
          }
@@ -33,20 +32,20 @@ class Rover {
                   generatorWatts: this.generatorWatts,
                   position: this.position
                }
-            });
-         } else {
-            for (let command of message.commands){
-               if (command.commandType === "MOVE"){
-                  if (this.mode === 'LOW_POWER') {
-                     response.results.push({completed: false});
-                     }
-                  }  
-               if (command.commandType === "MODE_CHANGE") {
+            })
+         }else if(command.commandType === "MOVE"){
+            if (this.mode === "LOW_POWER") {
+                  response.results.push({completed: false});
+            } else if(this.mode ==="NORMAL") {
+                  this.position = command.value;
                   response.results.push({completed: true});
-                  }  
-               };
+               } 
+         }else if (command.commandType === "MODE_CHANGE") {
+                  response.results.push({completed: true});
+               }  
             }
-      }
+         
+      
 
       return response;
    }
@@ -57,11 +56,11 @@ module.exports = Rover;
 //from studentgrade.specx.js
 let rover = new Rover(100); //100 means moving that much
     let commands = [
-       /* new Command('MOVE', 4321),//so rover is moving 4321
-       new Command('STATUS_CHECK'),  */
+      // new Command('MOVE', 4321),//so rover is moving 4321
+      // new Command('STATUS_CHECK'), 
        new Command('MODE_CHANGE', 'LOW_POWER'), //input command mode_change, input the new status (low power). if something has low power, it's not going to move. 
-        /*  new Command('MOVE', 3579),
-       new Command('STATUS_CHECK') */
+         new Command('MOVE', 3579),
+       //new Command('STATUS_CHECK')
     ];
     let message = new Message('TA power', commands);
     let response = rover.receiveMessage(message);
