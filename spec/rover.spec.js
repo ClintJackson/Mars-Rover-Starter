@@ -72,5 +72,11 @@ describe("Rover class", function() {
     expect(secondRoverResult).toEqual(true);
     expect(testRover.mode).toBe("LOW_POWER");
     
+    let testNormalMode = [new Command("MODE_CHANGE", "NORMAL")];
+    let thirdMessage = new Message("confirming update to NORMAL", testNormalMode);
+    let response3 = testRover.receiveMessage(thirdMessage);
+    let thirdRoverResult = response3.results.find(results => results.completed).completed;
+    expect(thirdRoverResult).toEqual(true);
+    expect(testRover.mode).toBe("NORMAL");
   })
 });
